@@ -30,4 +30,27 @@
 			background-color: darken(#c8dadf, 10);
 		}
 	}
+	
+	button {
+		font-weight: 400;
+		border: 1px solid;
+		padding: .5625rem 1rem;
+		margin-right: .5rem;
+		font-size: .75rem;
+		line-height: 1.125;
+		border-radius: .25rem;
+		transition: all 250ms cubic-bezier(.27,.01,.38,1.06);
+		color: #ffffff;
+		border-color: #007bff;
+		background: #007bff;
+		display: block;
+		margin: auto;
+	}
+	
+	.ribs-fileuploader-text {
+		text-align: center;
+		font-size: 1rem;
+		margin-top: 5px;
+		font-family: sans-serif;
+	}
 }

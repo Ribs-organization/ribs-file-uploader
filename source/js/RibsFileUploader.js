@@ -17,6 +17,11 @@ class RibsFileUploader {
     selectFileButton.textContent = 'Sélectionnez des fichiers';
     parentUploaderDiv.append(selectFileButton);
 
+    const textDiv = document.createElement('div');
+    textDiv.classList.add('ribs-fileuploader-text');
+    textDiv.textContent = 'Ou déposez les ici';
+    parentUploaderDiv.append(textDiv);
+
     const progressBar = document.createElement('div');
     progressBar.classList.add('progress');
     progressBar.max = 100;
