@@ -1,11 +1,17 @@
 .ribs-fileuploader {
 	font-size: 1.25rem;
-	background-color: #c8dadf;
+	background-color: #f1f1f1;
 	position: relative;
 	padding: 100px 20px;
-	outline: 2px dashed #92b0b3;
+	outline: 2px dashed #ccc;
 	outline-offset: -10px;
-	transition: outline-offset .15s ease-in-out, background-color .15s linear;
+	transition: outline-offset .15s ease-in-out;
+	
+	&.is-dragover {
+		outline-offset: -20px;
+		outline-color: #007bff;
+		background-color: #f1f1f1;
+	}
 	
 	input[type=file] {
 		width: 0.1px;
