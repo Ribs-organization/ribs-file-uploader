@@ -1,0 +1,33 @@
+.ribs-fileuploader {
+	font-size: 1.25rem;
+	background-color: #c8dadf;
+	position: relative;
+	padding: 100px 20px;
+	outline: 2px dashed #92b0b3;
+	outline-offset: -10px;
+	transition: outline-offset .15s ease-in-out, background-color .15s linear;
+	
+	input[type=file] {
+		width: 0.1px;
+		height: 0.1px;
+		opacity: 0;
+		overflow: hidden;
+		position: absolute;
+		z-index: -1;
+	}
+	
+	div.progress {
+		position: absolute;
+		top: 18px;
+		left: 18px;
+		width: 98.2%;
+		height: 15px;
+		background-color: transparent;
+		
+		> div {
+			height: 100%;
+			width: 0;
+			background-color: darken(#c8dadf, 10);
+		}
+	}
+}
