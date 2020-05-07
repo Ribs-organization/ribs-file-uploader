@@ -1,11 +1,25 @@
 class RibsFileUploader {
-  constructor() {
+  constructor(options = {}) {
     const uploaderInputs = document.querySelectorAll('[data-ribs-fileuploader]');
 
     uploaderInputs.forEach((element) => {
       this.initHtmlElements(element);
       this.initEventListeners();
     });
+
+    this.defineOptions(options);
+  }
+
+  /**
+   * @param options
+   */
+  defineOptions(options) {
+    if (!options.url) {
+      console.error('url is mandatory option');
+      return;
+    }
+
+    this.options = options;
   }
 
   /**
@@ -107,13 +121,69 @@ class RibsFileUploader {
         const dt = event.dataTransfer;
         const files = [...dt.files];
 
-        //initializeProgress(files.length)
-        //files.forEach(uploadFile)
+        this.initializeProgress(files.length, element.querySelector('.progress').querySelector('div'));
+        files.forEach((file, index) => {
+          this.uploadFile(file, index);
+        });
+
         files.forEach((file) => {
           this.previewFile(file, element)
         });
       }, false);
     });
+  }
+
+  /**
+   * @param numFiles
+   * @param progressBar
+   */
+  initializeProgress(numFiles, progressBar) {
+    this.uploadProgress = [];
+    this.progressBar = progressBar;
+
+    for(let i = numFiles; i > 0; i--) {
+      this.uploadProgress.push(0);
+    }
+  }
+
+  /**
+   * @param fileNumber
+   * @param percent
+   */
+  updateProgress(fileNumber, percent) {
+    this.uploadProgress[fileNumber] = percent;
+    let total = this.uploadProgress.reduce((tot, curr) => tot + curr, 0) / this.uploadProgress.length;
+    this.progressBar.style.width = `${total}%`;
+  }
+
+  /**
+   * @param file
+   * @param index
+   */
+  uploadFile(file, index) {
+    var url = this.options.url;
+    var xhr = new XMLHttpRequest();
+    var formData = new FormData();
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+    // Update progress (can be used to show progress indicator)
+    xhr.upload.addEventListener("progress", (event) => {
+      this.updateProgress(index, (event.loaded * 100.0 / event.total) || 100);
+    });
+
+    /*xhr.addEventListener('readystatechange', (event) => {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        //updateProgress(i, 100) // <- Add this
+      }
+      else if (xhr.readyState == 4 && xhr.status != 200) {
+        // Error. Inform the user
+      }
+    });*/
+
+    formData.append('upload_preset', 'ujpu6gyk');
+    formData.append('file', file);
+    xhr.send(formData);
   }
 
   /**

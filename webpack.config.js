@@ -6,7 +6,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   entry: {
     'js/main': './source/js/main.js',
   },
@@ -19,6 +19,7 @@ module.exports = {
         test: /\.js$/,
         include: [
           path.join(__dirname, 'source/'),
+          path.join(__dirname, 'node_modules/ribs-api/'),
         ],
         loader: 'babel-loader',
       },
