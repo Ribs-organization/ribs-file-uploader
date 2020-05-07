@@ -36,7 +36,9 @@ class RibsFileUploader {
     const progressBarProgress = document.createElement('div');
     progressBar.append(progressBarProgress);
 
-    parentUploaderDiv.append(document.createElement('div'));
+    const galleryDiv = document.createElement('div');
+    galleryDiv.classList.add('ribs-fileuploader-gallery');
+    parentUploaderDiv.append(galleryDiv);
   }
 
   /**
@@ -46,6 +48,7 @@ class RibsFileUploader {
     this.initPreventDefaultsEvents();
     this.initDragEnterEvents();
     this.initDragOutEvents();
+    this.initDropEvents();
   }
 
   /**
@@ -77,7 +80,7 @@ class RibsFileUploader {
           element.classList.add('is-dragover');
         }, false);
       });
-    })
+    });
   }
 
   /**
@@ -90,7 +93,43 @@ class RibsFileUploader {
           element.classList.remove('is-dragover');
         }, false);
       });
-    })
+    });
+  }
+
+  /**
+   * method to add drops events to prepare upload and file preview
+   */
+  initDropEvents() {
+    document.querySelectorAll('.ribs-fileuploader').forEach((element) => {
+      element.addEventListener('drop', (event) => {
+        element.classList.add('has-files');
+
+        const dt = event.dataTransfer;
+        const files = [...dt.files];
+
+        //initializeProgress(files.length)
+        //files.forEach(uploadFile)
+        files.forEach((file) => {
+          this.previewFile(file, element)
+        });
+      }, false);
+    });
+  }
+
+  /**
+   * method to preview file durng upload
+   * @param file
+   * @param uploaderDiv
+   */
+  previewFile(file, uploaderDiv) {
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onloadend = () => {
+      let img = document.createElement('img');
+      img.src = reader.result;
+      uploaderDiv.querySelector('.ribs-fileuploader-gallery').appendChild(img);
+    }
   }
 }
 
