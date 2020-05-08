@@ -4,9 +4,9 @@ class RibsFileUploader {
 
     uploaderInputs.forEach((element) => {
       this.initHtmlElements(element);
-      this.initEventListeners();
     });
 
+    this.initEventListeners();
     this.defineOptions(options);
   }
 
