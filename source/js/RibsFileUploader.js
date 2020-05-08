@@ -32,12 +32,14 @@ class RibsFileUploader {
    */
   initHtmlElements(uploader) {
     const parentUploaderDiv = document.createElement('div');
+    parentUploaderDiv.id = `inner-${uploader.id}`;
     parentUploaderDiv.classList.add('ribs-fileuploader');
     uploader.parentNode.insertBefore(parentUploaderDiv, uploader);
     parentUploaderDiv.appendChild(uploader);
 
-    const selectFileButton = document.createElement('button');
+    const selectFileButton = document.createElement('label');
     selectFileButton.textContent = 'Sélectionnez des fichiers';
+    selectFileButton.setAttribute('for', uploader.id);
     parentUploaderDiv.append(selectFileButton);
 
     const textDiv = document.createElement('div');

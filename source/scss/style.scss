@@ -41,8 +41,9 @@
 		}
 	}
 	
-	button {
+	label {
 		font-weight: 400;
+		font-family: sans-serif;
 		padding: .5625rem 1rem;
 		font-size: .75rem;
 		line-height: 1.125;
@@ -52,6 +53,7 @@
 		border: 1px solid #007bff;
 		background: #007bff;
 		display: block;
+		width: 135px;
 		margin: auto;
 		cursor: pointer;
 		
