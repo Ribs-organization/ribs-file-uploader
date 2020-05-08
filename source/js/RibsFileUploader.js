@@ -6,6 +6,7 @@ class RibsFileUploader {
       this.initHtmlElements(element);
     });
 
+    this.uploadProgress = [];
     this.initEventListeners();
     this.defineOptions(options);
   }
@@ -121,9 +122,9 @@ class RibsFileUploader {
         const dt = event.dataTransfer;
         const files = [...dt.files];
 
-        this.initializeProgress(files.length, element.querySelector('.progress').querySelector('div'));
+        this.initializeProgress(element, files.length);
         files.forEach((file, index) => {
-          this.uploadFile(file, index);
+          this.uploadFile(file, index, element);
         });
 
         files.forEach((file) => {
@@ -134,52 +135,45 @@ class RibsFileUploader {
   }
 
   /**
+   * @param element
    * @param numFiles
    * @param progressBar
    */
-  initializeProgress(numFiles, progressBar) {
-    this.uploadProgress = [];
-    this.progressBar = progressBar;
+  initializeProgress(element, numFiles) {
+    this.uploadProgress[element.id] = [];
 
     for(let i = numFiles; i > 0; i--) {
-      this.uploadProgress.push(0);
+      this.uploadProgress[element.id].push(0);
     }
   }
 
   /**
+   * @param element
    * @param fileNumber
    * @param percent
    */
-  updateProgress(fileNumber, percent) {
-    this.uploadProgress[fileNumber] = percent;
-    let total = this.uploadProgress.reduce((tot, curr) => tot + curr, 0) / this.uploadProgress.length;
-    this.progressBar.style.width = `${total}%`;
+  updateProgress(element, fileNumber, percent) {
+    const progressBar = element.querySelector('.progress').querySelector('div');
+    this.uploadProgress[element.id][fileNumber] = percent;
+    let total = this.uploadProgress[element.id].reduce((tot, curr) => tot + curr, 0) / this.uploadProgress[element.id].length;
+    progressBar.style.width = `${total}%`;
   }
 
   /**
    * @param file
    * @param index
+   * @param element
    */
-  uploadFile(file, index) {
+  uploadFile(file, index, element) {
     var url = this.options.url;
     var xhr = new XMLHttpRequest();
     var formData = new FormData();
     xhr.open('POST', url, true);
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
-    // Update progress (can be used to show progress indicator)
     xhr.upload.addEventListener("progress", (event) => {
-      this.updateProgress(index, (event.loaded * 100.0 / event.total) || 100);
+      this.updateProgress(element, index, (event.loaded * 100.0 / event.total) || 100);
     });
-
-    /*xhr.addEventListener('readystatechange', (event) => {
-      if (xhr.readyState == 4 && xhr.status == 200) {
-        //updateProgress(i, 100) // <- Add this
-      }
-      else if (xhr.readyState == 4 && xhr.status != 200) {
-        // Error. Inform the user
-      }
-    });*/
 
     formData.append('upload_preset', 'ujpu6gyk');
     formData.append('file', file);
