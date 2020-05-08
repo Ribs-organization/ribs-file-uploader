@@ -69,6 +69,7 @@ class RibsFileUploader {
     this.initDragEnterEvents();
     this.initDragOutEvents();
     this.initDropEvents();
+    this.initInputFileOnchange();
   }
 
   /**
@@ -127,6 +128,27 @@ class RibsFileUploader {
         const dt = event.dataTransfer;
         const files = [...dt.files];
 
+        this.initializeProgress(uploaderDiv, files.length);
+        files.forEach((file, index) => {
+          this.uploadFile(file, index, uploaderDiv);
+        });
+
+        files.forEach((file) => {
+          this.previewFile(file, uploaderDiv)
+        });
+      }, false);
+    });
+  }
+
+  /**
+   * upload with click on label
+   */
+  initInputFileOnchange() {
+    document.querySelectorAll('.ribs-fileuploader').forEach((uploaderDiv) => {
+      uploaderDiv.querySelector('input[type=file]').addEventListener('change', (event) => {
+        uploaderDiv.classList.add('has-files');
+
+        const files = [...event.currentTarget.files];
         this.initializeProgress(uploaderDiv, files.length);
         files.forEach((file, index) => {
           this.uploadFile(file, index, uploaderDiv);
