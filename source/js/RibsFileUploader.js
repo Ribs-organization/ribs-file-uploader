@@ -1,4 +1,7 @@
 class RibsFileUploader {
+  /**
+   * @param options
+   */
   constructor(options = {}) {
     const uploaderInputs = document.querySelectorAll('[data-ribs-fileuploader]');
 
@@ -115,56 +118,55 @@ class RibsFileUploader {
    * method to add drops events to prepare upload and file preview
    */
   initDropEvents() {
-    document.querySelectorAll('.ribs-fileuploader').forEach((element) => {
-      element.addEventListener('drop', (event) => {
-        element.classList.add('has-files');
+    document.querySelectorAll('.ribs-fileuploader').forEach((uploaderDiv) => {
+      uploaderDiv.addEventListener('drop', (event) => {
+        uploaderDiv.classList.add('has-files');
 
         const dt = event.dataTransfer;
         const files = [...dt.files];
 
-        this.initializeProgress(element, files.length);
+        this.initializeProgress(uploaderDiv, files.length);
         files.forEach((file, index) => {
-          this.uploadFile(file, index, element);
+          this.uploadFile(file, index, uploaderDiv);
         });
 
         files.forEach((file) => {
-          this.previewFile(file, element)
+          this.previewFile(file, uploaderDiv)
         });
       }, false);
     });
   }
 
   /**
-   * @param element
+   * @param uploaderDiv
    * @param numFiles
-   * @param progressBar
    */
-  initializeProgress(element, numFiles) {
-    this.uploadProgress[element.id] = [];
+  initializeProgress(uploaderDiv, numFiles) {
+    this.uploadProgress[uploaderDiv.id] = [];
 
     for(let i = numFiles; i > 0; i--) {
-      this.uploadProgress[element.id].push(0);
+      this.uploadProgress[uploaderDiv.id].push(0);
     }
   }
 
   /**
-   * @param element
+   * @param uploaderDiv
    * @param fileNumber
    * @param percent
    */
-  updateProgress(element, fileNumber, percent) {
-    const progressBar = element.querySelector('.progress').querySelector('div');
-    this.uploadProgress[element.id][fileNumber] = percent;
-    let total = this.uploadProgress[element.id].reduce((tot, curr) => tot + curr, 0) / this.uploadProgress[element.id].length;
+  updateProgress(uploaderDiv, fileNumber, percent) {
+    const progressBar = uploaderDiv.querySelector('.progress').querySelector('div');
+    this.uploadProgress[uploaderDiv.id][fileNumber] = percent;
+    let total = this.uploadProgress[uploaderDiv.id].reduce((tot, curr) => tot + curr, 0) / this.uploadProgress[uploaderDiv.id].length;
     progressBar.style.width = `${total}%`;
   }
 
   /**
    * @param file
    * @param index
-   * @param element
+   * @param uploaderDiv
    */
-  uploadFile(file, index, element) {
+  uploadFile(file, index, uploaderDiv) {
     var url = this.options.url;
     var xhr = new XMLHttpRequest();
     var formData = new FormData();
@@ -172,7 +174,7 @@ class RibsFileUploader {
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
     xhr.upload.addEventListener("progress", (event) => {
-      this.updateProgress(element, index, (event.loaded * 100.0 / event.total) || 100);
+      this.updateProgress(uploaderDiv, index, (event.loaded * 100.0 / event.total) || 100);
     });
 
     formData.append('upload_preset', 'ujpu6gyk');
