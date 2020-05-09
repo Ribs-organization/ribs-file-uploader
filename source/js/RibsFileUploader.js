@@ -195,13 +195,11 @@ class RibsFileUploader {
     var xhr = new XMLHttpRequest();
     var formData = new FormData();
     xhr.open('POST', url, true);
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
     xhr.upload.addEventListener("progress", (event) => {
       this.updateProgress(uploaderDiv, index, (event.loaded * 100.0 / event.total) || 100);
     });
 
-    formData.append('upload_preset', 'ujpu6gyk');
     formData.append('file', file);
     xhr.send(formData);
   }
