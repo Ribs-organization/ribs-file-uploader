@@ -195,9 +195,19 @@ class RibsFileUploader {
     var xhr = new XMLHttpRequest();
     var formData = new FormData();
     xhr.open('POST', url, true);
+    xhr.setRequestHeader('Accept', 'application/json');
 
     xhr.upload.addEventListener("progress", (event) => {
       this.updateProgress(uploaderDiv, index, (event.loaded * 100.0 / event.total) || 100);
+    });
+
+    xhr.addEventListener('readystatechange', function(e) {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        console.log(xhr.response);
+      }
+      else if (xhr.readyState == 4 && xhr.status != 200) {
+        console.log('error');
+      }
     });
 
     formData.append('file', file);
