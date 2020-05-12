@@ -203,7 +203,12 @@ class RibsFileUploader {
 
     xhr.addEventListener('readystatechange', function(e) {
       if (xhr.readyState == 4 && xhr.status == 200) {
-        console.log(xhr.response);
+        const fileInputId = uploaderDiv.querySelector('input[type=file').id;
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.value = xhr.response;
+        input.name = `${fileInputId}s[]`;
+        uploaderDiv.append(input);
       }
       else if (xhr.readyState == 4 && xhr.status != 200) {
         console.log('error');
