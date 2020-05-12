@@ -133,8 +133,8 @@ class RibsFileUploader {
           this.uploadFile(file, index, uploaderDiv);
         });
 
-        files.forEach((file) => {
-          this.previewFile(file, uploaderDiv)
+        files.forEach((file, index) => {
+          this.previewFile(file, uploaderDiv, index)
         });
       }, false);
     });
@@ -153,9 +153,8 @@ class RibsFileUploader {
         files.forEach((file, index) => {
           this.uploadFile(file, index, uploaderDiv);
         });
-
-        files.forEach((file) => {
-          this.previewFile(file, uploaderDiv)
+        files.forEach((file, index) => {
+          this.previewFile(file, uploaderDiv, index)
         });
       }, false);
     });
@@ -209,6 +208,8 @@ class RibsFileUploader {
         input.value = xhr.response;
         input.name = `${fileInputId}s[]`;
         uploaderDiv.append(input);
+        const uploadedFilePreview = uploaderDiv.querySelector(`#uploaded-file-${index}`);
+        uploadedFilePreview.classList.add('uploaded');
       }
       else if (xhr.readyState == 4 && xhr.status != 200) {
         console.log('error');
@@ -223,15 +224,19 @@ class RibsFileUploader {
    * method to preview file durng upload
    * @param file
    * @param uploaderDiv
+   * @param index
    */
-  previewFile(file, uploaderDiv) {
+  previewFile(file, uploaderDiv, index) {
     let reader = new FileReader();
     reader.readAsDataURL(file);
 
     reader.onloadend = () => {
-      let img = document.createElement('img');
+      const img = document.createElement('img');
       img.src = reader.result;
-      uploaderDiv.querySelector('.ribs-fileuploader-gallery').appendChild(img);
+      const div = document.createElement('div');
+      div.id = `uploaded-file-${index}`;
+      div.appendChild(img);
+      uploaderDiv.querySelector('.ribs-fileuploader-gallery').appendChild(div);
     }
   }
 }
