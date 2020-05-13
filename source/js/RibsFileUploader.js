@@ -182,6 +182,10 @@ class RibsFileUploader {
     this.uploadProgress[uploaderDiv.id][fileNumber] = percent;
     let total = this.uploadProgress[uploaderDiv.id].reduce((tot, curr) => tot + curr, 0) / this.uploadProgress[uploaderDiv.id].length;
     progressBar.style.width = `${total}%`;
+
+    if (total === 100) {
+      progressBar.classList.add('uploaded');
+    }
   }
 
   /**
@@ -235,6 +239,10 @@ class RibsFileUploader {
       img.src = reader.result;
       const div = document.createElement('div');
       div.id = `uploaded-file-${index}`;
+      const delDiv = document.createElement('div');
+      delDiv.id = `uploaded-file-delete-${index}`;
+      delDiv.textContent = 'X';
+      div.appendChild(delDiv);
       div.appendChild(img);
       uploaderDiv.querySelector('.ribs-fileuploader-gallery').appendChild(div);
     }
