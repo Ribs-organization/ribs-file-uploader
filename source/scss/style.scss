@@ -110,6 +110,12 @@
 					font-size: 0.9rem;
 					line-height: 20px;
 					font-family: sans-serif;
+					cursor: pointer;
+					transition: all 0.3s ease;
+					
+					&:hover {
+						background: #c4183c;
+					}
 				}
 			}
 			
