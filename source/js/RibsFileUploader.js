@@ -53,6 +53,12 @@ class RibsFileUploader {
     progressBar.value = 0;
     parentUploaderDiv.append(progressBar);
 
+    const inputFileNumber = document.createElement('input');
+    inputFileNumber.type = 'hidden';
+    inputFileNumber.id = `${uploader.id}-file-number`;
+    inputFileNumber.value = 0;
+    parentUploaderDiv.append(inputFileNumber);
+
     const progressBarProgress = document.createElement('div');
     progressBar.append(progressBarProgress);
 
@@ -127,14 +133,23 @@ class RibsFileUploader {
 
         const dt = event.dataTransfer;
         const files = [...dt.files];
+        const fileNumberInput = uploaderDiv.querySelector('[id*="file-number"]');
+        let startIndex = 0;
+
+        if (parseInt(fileNumberInput.value) === 0) {
+          fileNumberInput.value = parseInt(fileNumberInput.value) + files.length;
+        } else {
+          fileNumberInput.value  = parseInt(fileNumberInput.value) + files.length;
+          startIndex = parseInt(fileNumberInput.value) - files.length;
+        }
 
         this.initializeProgress(uploaderDiv, files.length);
         files.forEach((file, index) => {
-          this.uploadFile(file, index, uploaderDiv);
+          this.uploadFile(file, startIndex+index, index, uploaderDiv);
         });
 
         files.forEach((file, index) => {
-          this.previewFile(file, uploaderDiv, index)
+          this.previewFile(file, uploaderDiv, startIndex+index)
         });
       }, false);
     });
@@ -148,13 +163,25 @@ class RibsFileUploader {
       uploaderDiv.querySelector('input[type=file]').addEventListener('change', (event) => {
         uploaderDiv.classList.add('has-files');
 
-        const files = [...event.currentTarget.files];
+        const dt = event.dataTransfer;
+        const files = [...dt.files];
+        const fileNumberInput = uploaderDiv.querySelector('[id*="file-number"]');
+        let startIndex = 0;
+
+        if (parseInt(fileNumberInput.value) === 0) {
+          fileNumberInput.value = parseInt(fileNumberInput.value) + files.length;
+        } else {
+          fileNumberInput.value  = parseInt(fileNumberInput.value) + files.length;
+          startIndex = parseInt(fileNumberInput.value) - files.length;
+        }
+
         this.initializeProgress(uploaderDiv, files.length);
         files.forEach((file, index) => {
-          this.uploadFile(file, index, uploaderDiv);
+          this.uploadFile(file, startIndex+index, index, uploaderDiv);
         });
+
         files.forEach((file, index) => {
-          this.previewFile(file, uploaderDiv, index)
+          this.previewFile(file, uploaderDiv, startIndex+index)
         });
       }, false);
     });
@@ -191,9 +218,10 @@ class RibsFileUploader {
   /**
    * @param file
    * @param index
+   * @param progressIndex
    * @param uploaderDiv
    */
-  uploadFile(file, index, uploaderDiv) {
+  uploadFile(file, index, progressIndex, uploaderDiv) {
     var url = this.options.url;
     var xhr = new XMLHttpRequest();
     var formData = new FormData();
@@ -201,7 +229,7 @@ class RibsFileUploader {
     xhr.setRequestHeader('Accept', 'application/json');
 
     xhr.upload.addEventListener("progress", (event) => {
-      this.updateProgress(uploaderDiv, index, (event.loaded * 100.0 / event.total) || 100);
+      this.updateProgress(uploaderDiv, progressIndex, (event.loaded * 100.0 / event.total) || 100);
     });
 
     xhr.addEventListener('readystatechange', function(e) {
