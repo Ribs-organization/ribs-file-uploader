@@ -238,9 +238,11 @@ class RibsFileUploader {
         input.type = 'hidden';
         input.value = xhr.response;
         input.name = `${fileInputId}s[]`;
+        input.id = `input-uploaded-file-${index}`;
         uploaderDiv.append(input);
         const uploadedFilePreview = uploaderDiv.querySelector(`#uploaded-file-${index}`);
         uploadedFilePreview.classList.add('uploaded');
+        uploadedFilePreview.querySelector('div').addEventListener('click', (event) => this.deleteFile(event, uploaderDiv));
       }
       else if (xhr.readyState == 4 && xhr.status != 200) {
         console.log('error');
@@ -273,6 +275,45 @@ class RibsFileUploader {
       div.appendChild(img);
       uploaderDiv.querySelector('.ribs-fileuploader-gallery').appendChild(div);
     }
+  }
+
+  /**
+   * method to deletes uploaded files
+   * @param event
+   * @param uploaderDiv
+   */
+  deleteFile(event, uploaderDiv) {
+    const deleteButtonDiv = event.currentTarget;
+    const imageDiv = deleteButtonDiv.parentNode;
+
+    const inputImageInfo = uploaderDiv.querySelector(`#input-${imageDiv.id}`);
+    const imageInfo = JSON.parse(inputImageInfo.value);
+
+    const xhr = new XMLHttpRequest();
+    const formData = new FormData();
+    xhr.open('POST', this.options.deleteUrl, true);
+    xhr.setRequestHeader('Accept', 'application/json');
+
+    xhr.addEventListener('readystatechange', () => {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        const data = JSON.parse(xhr.response);
+        if (data.success) {
+          imageDiv.remove();
+          inputImageInfo.remove();
+
+          if (uploaderDiv.querySelector('.ribs-fileuploader-gallery').childNodes.length === 0) {
+            uploaderDiv.classList.remove('has-files');
+          }
+        }
+      }
+      else if (xhr.readyState == 4 && xhr.status != 200) {
+        console.log('error');
+      }
+    });
+
+    formData.append('file_path', imageInfo.file_path);
+    formData.append('file_name', imageInfo.new_filename);
+    xhr.send(formData);
   }
 }
 
