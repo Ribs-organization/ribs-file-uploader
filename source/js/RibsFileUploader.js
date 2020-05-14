@@ -89,7 +89,7 @@ class RibsFileUploader {
       }, false);
 
       document.querySelectorAll('.ribs-fileuploader').forEach((element) => {
-        element.addEventListener(eventName, event => (event) => {
+        element.addEventListener(eventName, (event) => {
           event.preventDefault();
           event.stopPropagation();
         }, false);
@@ -129,28 +129,7 @@ class RibsFileUploader {
   initDropEvents() {
     document.querySelectorAll('.ribs-fileuploader').forEach((uploaderDiv) => {
       uploaderDiv.addEventListener('drop', (event) => {
-        uploaderDiv.classList.add('has-files');
-
-        const dt = event.dataTransfer;
-        const files = [...dt.files];
-        const fileNumberInput = uploaderDiv.querySelector('[id*="file-number"]');
-        let startIndex = 0;
-
-        if (parseInt(fileNumberInput.value) === 0) {
-          fileNumberInput.value = parseInt(fileNumberInput.value) + files.length;
-        } else {
-          fileNumberInput.value  = parseInt(fileNumberInput.value) + files.length;
-          startIndex = parseInt(fileNumberInput.value) - files.length;
-        }
-
-        this.initializeProgress(uploaderDiv, files.length);
-        files.forEach((file, index) => {
-          this.uploadFile(file, startIndex+index, index, uploaderDiv);
-        });
-
-        files.forEach((file, index) => {
-          this.previewFile(file, uploaderDiv, startIndex+index)
-        });
+        this.handleFilesUpload(event, uploaderDiv);
       }, false);
     });
   }
@@ -161,29 +140,45 @@ class RibsFileUploader {
   initInputFileOnchange() {
     document.querySelectorAll('.ribs-fileuploader').forEach((uploaderDiv) => {
       uploaderDiv.querySelector('input[type=file]').addEventListener('change', (event) => {
-        uploaderDiv.classList.add('has-files');
-
-        const dt = event.dataTransfer;
-        const files = [...dt.files];
-        const fileNumberInput = uploaderDiv.querySelector('[id*="file-number"]');
-        let startIndex = 0;
-
-        if (parseInt(fileNumberInput.value) === 0) {
-          fileNumberInput.value = parseInt(fileNumberInput.value) + files.length;
-        } else {
-          fileNumberInput.value  = parseInt(fileNumberInput.value) + files.length;
-          startIndex = parseInt(fileNumberInput.value) - files.length;
-        }
-
-        this.initializeProgress(uploaderDiv, files.length);
-        files.forEach((file, index) => {
-          this.uploadFile(file, startIndex+index, index, uploaderDiv);
-        });
-
-        files.forEach((file, index) => {
-          this.previewFile(file, uploaderDiv, startIndex+index)
-        });
+        this.handleFilesUpload(event, uploaderDiv, true);
       }, false);
+    });
+  }
+
+  /**
+   * method to prepare upload file and preview with drop on change event
+   * @param event
+   * @param uploaderDiv
+   * @param fromChangeEvent
+   */
+  handleFilesUpload(event, uploaderDiv, fromChangeEvent = false) {
+    uploaderDiv.classList.add('has-files');
+    let files;
+    const dt = event.dataTransfer;
+
+    if (fromChangeEvent) {
+      files = [...event.currentTarget.files];
+    } else {
+      files = [...dt.files];
+    }
+
+    const fileNumberInput = uploaderDiv.querySelector('[id*="file-number"]');
+    let startIndex = 0;
+
+    if (parseInt(fileNumberInput.value) === 0) {
+      fileNumberInput.value = parseInt(fileNumberInput.value) + files.length;
+    } else {
+      fileNumberInput.value  = parseInt(fileNumberInput.value) + files.length;
+      startIndex = parseInt(fileNumberInput.value) - files.length;
+    }
+
+    this.initializeProgress(uploaderDiv, files.length);
+    files.forEach((file, index) => {
+      this.uploadFile(file, startIndex+index, index, uploaderDiv);
+    });
+
+    files.forEach((file, index) => {
+      this.previewFile(file, uploaderDiv, startIndex+index)
     });
   }
 
@@ -232,7 +227,7 @@ class RibsFileUploader {
       this.updateProgress(uploaderDiv, progressIndex, (event.loaded * 100.0 / event.total) || 100);
     });
 
-    xhr.addEventListener('readystatechange', function(e) {
+    xhr.addEventListener('readystatechange', () => {
       if (xhr.readyState == 4 && xhr.status == 200) {
         const fileInputId = uploaderDiv.querySelector('input[type=file').id;
         const input = document.createElement('input');
