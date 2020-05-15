@@ -2,7 +2,7 @@ const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 
 module.exports = {
@@ -46,6 +46,11 @@ module.exports = {
       filename: 'css/style.min.css',
       chunkFilename:'css/style.min.css',
     }),
+    new CopyPlugin(
+      [
+        { from: './source/js/RibsFileUploader.js', to: './js/RibsFileUploader.js' },
+      ]
+    ),
     new ProgressBarPlugin()
   ],
   optimization: {
