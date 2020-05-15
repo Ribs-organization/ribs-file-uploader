@@ -15,7 +15,9 @@
     "js",
     "es6",
     "scss",
-    "ribs-front-component"
+    "ribs-front-component",
+    "upload-files",
+    "upload-images"
   ],
   "author": "pioupiou <pilloud.anthony@gmail.com> (https://anthony-pilloud.fr)",
   "license": "MIT",
@@ -43,6 +45,5 @@
     "webpack-cli": "^3.2.1"
   },
   "dependencies": {
-    "ribs-api": "^1.0.7"
   }
 }
