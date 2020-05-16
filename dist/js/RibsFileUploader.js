@@ -260,8 +260,8 @@ class RibsFileUploader {
    */
   uploadFile(file, index, progressIndex, uploaderDiv) {
     const url = this.getUrlWithParameter(this.options.url, this.retrieveParameter(uploaderDiv, 'urlParam'));
-    var xhr = new XMLHttpRequest();
-    var formData = new FormData();
+    const xhr = new XMLHttpRequest();
+    const formData = new FormData();
     xhr.open('POST', url, true);
     xhr.setRequestHeader('Accept', 'application/json');
 
