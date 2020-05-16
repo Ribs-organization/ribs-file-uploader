@@ -323,10 +323,8 @@ class RibsFileUploader {
   deleteFile(event, uploaderDiv) {
     const deleteButtonDiv = event.currentTarget;
     const imageDiv = deleteButtonDiv.parentNode;
-
     const inputImageInfo = uploaderDiv.querySelector(`#input-${imageDiv.id}`);
     const imageInfo = JSON.parse(inputImageInfo.value);
-
     const xhr = new XMLHttpRequest();
     const formData = new FormData();
     xhr.open('POST', this.options.deleteUrl, true);

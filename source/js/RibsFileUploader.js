@@ -19,8 +19,9 @@ class RibsFileUploader {
    */
   defineOptions(options) {
     if (!options.url) {
-      console.error('url is mandatory option');
-      return;
+      options.url = '';
+     // console.error('url is mandatory option');
+     // return;
     }
     if (!options.deleteUrl) {
       console.error('deleteUrl is mandatory option');
@@ -323,10 +324,8 @@ class RibsFileUploader {
   deleteFile(event, uploaderDiv) {
     const deleteButtonDiv = event.currentTarget;
     const imageDiv = deleteButtonDiv.parentNode;
-
     const inputImageInfo = uploaderDiv.querySelector(`#input-${imageDiv.id}`);
     const imageInfo = JSON.parse(inputImageInfo.value);
-
     const xhr = new XMLHttpRequest();
     const formData = new FormData();
     xhr.open('POST', this.options.deleteUrl, true);
