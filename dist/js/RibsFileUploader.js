@@ -26,6 +26,9 @@ class RibsFileUploader {
       console.error('deleteUrl is mandatory option');
       return;
     }
+    if (!options.retrieveFilesUrl) {
+      options.retrieveFilesUrl = false;
+    }
 
     this.options = options;
   }
@@ -215,13 +218,48 @@ class RibsFileUploader {
   }
 
   /**
+   * method to retrieve a specific parameter write on input file
+   * @param uploaderDiv
+   * @param parameter
+   * @returns {string | undefined}
+   */
+  retrieveParameter(uploaderDiv, parameter) {
+    const inputFile = uploaderDiv.querySelector('input[type=file]');
+
+    return inputFile.dataset[parameter];
+  }
+
+  /**
+   * method to get formatted url with a given parameter get on input file
+   * @param url
+   * @param parameter
+   * @returns {string|*}
+   */
+  getUrlWithParameter(url, parameter) {
+    if (parameter || parameter === '' || parameter === undefined) {
+      return url;
+    }
+
+    const lastCharacterUrl = url.substr(url.length - 1);
+    const firstCharacterParameter = parameter.substr(0 ,1);
+
+    if (lastCharacterUrl !== '/' && firstCharacterParameter !== '?') {
+      return `${url}/${parameter}`;
+    } else if (firstCharacterParameter === '?') {
+      return `${url}?${parameter}`;
+    }
+
+    return `${url}${parameter}`;
+  }
+
+  /**
    * @param file
    * @param index
    * @param progressIndex
    * @param uploaderDiv
    */
   uploadFile(file, index, progressIndex, uploaderDiv) {
-    var url = this.options.url;
+    const url = this.getUrlWithParameter(this.options.url, this.retrieveParameter(uploaderDiv, 'urlParam'));
     var xhr = new XMLHttpRequest();
     var formData = new FormData();
     xhr.open('POST', url, true);
