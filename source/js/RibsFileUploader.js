@@ -26,6 +26,9 @@ class RibsFileUploader {
       console.error('deleteUrl is mandatory option');
       return;
     }
+    if (!options.retrieveFilesUrl) {
+      options.retrieveFilesUrl = false;
+    }
 
     this.options = options;
   }
