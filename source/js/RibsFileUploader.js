@@ -20,12 +20,9 @@ class RibsFileUploader {
   defineOptions(options) {
     if (!options.url) {
       options.url = '';
-     // console.error('url is mandatory option');
-     // return;
     }
     if (!options.deleteUrl) {
-      console.error('deleteUrl is mandatory option');
-      return;
+      options.deleteUrl = '';
     }
     if (!options.retrieveFilesUrl) {
       options.retrieveFilesUrl = false;
@@ -226,31 +223,56 @@ class RibsFileUploader {
    */
   retrieveParameter(uploaderDiv, parameter) {
     const inputFile = uploaderDiv.querySelector('input[type=file]');
+    const parameters = inputFile.dataset[parameter];
 
-    return inputFile.dataset[parameter];
+    if (parameters) {
+      try {
+        return JSON.parse(parameters);
+      } catch (e) {
+        console.warn('Erreur in uploader JSON');
+        return false;
+      }
+    }
+
+    return false;
   }
 
   /**
-   * method to get formatted url with a given parameter get on input file
+   * method to retrieve url with parameters or config url
    * @param url
-   * @param parameter
-   * @returns {string|*}
+   * @param parameters
+   * @returns {null|*}
    */
-  getUrlWithParameter(url, parameter) {
-    if (parameter || parameter === '' || parameter === undefined) {
+  retrieveUrl(url, parameters) {
+    if (parameters && parameters.url && parameters.url !== '') {
+      return parameters.url;
+    } else if (url && url !== '') {
       return url;
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * method to build form data with parameters of input
+   * @param parameters
+   * @param file
+   * @returns {FormData}
+   */
+  buildFormData(parameters, file = null) {
+    const formData = new FormData();
+
+    for (const tempData in parameters) {
+      if (tempData !== 'url') {
+        formData.append(tempData, parameters[tempData]);
+      }
     }
 
-    const lastCharacterUrl = url.substr(url.length - 1);
-    const firstCharacterParameter = parameter.substr(0 ,1);
-
-    if (lastCharacterUrl !== '/' && firstCharacterParameter !== '?') {
-      return `${url}/${parameter}`;
-    } else if (firstCharacterParameter === '?') {
-      return `${url}?${parameter}`;
+    if (file) {
+      formData.append('file', file);
     }
 
-    return `${url}${parameter}`;
+    return formData;
   }
 
   /**
@@ -260,9 +282,9 @@ class RibsFileUploader {
    * @param uploaderDiv
    */
   uploadFile(file, index, progressIndex, uploaderDiv) {
-    const url = this.getUrlWithParameter(this.options.url, this.retrieveParameter(uploaderDiv, 'urlParam'));
+    const parameters = this.retrieveParameter(uploaderDiv, 'urlParam');
+    const url = this.retrieveUrl(this.options.url, parameters);
     const xhr = new XMLHttpRequest();
-    const formData = new FormData();
     xhr.open('POST', url, true);
     xhr.setRequestHeader('Accept', 'application/json');
 
@@ -288,8 +310,7 @@ class RibsFileUploader {
       }
     });
 
-    formData.append('file', file);
-    xhr.send(formData);
+    xhr.send(this.buildFormData(parameters, file));
   }
 
   /**
@@ -322,13 +343,13 @@ class RibsFileUploader {
    * @param uploaderDiv
    */
   deleteFile(event, uploaderDiv) {
-    const deleteButtonDiv = event.currentTarget;
-    const imageDiv = deleteButtonDiv.parentNode;
+    const parameters = this.retrieveParameter(uploaderDiv, 'deleteUrlParam');
+    const url = this.retrieveUrl(this.options.deleteUrl, parameters);
+    const imageDiv = event.currentTarget.parentNode;
     const inputImageInfo = uploaderDiv.querySelector(`#input-${imageDiv.id}`);
     const imageInfo = JSON.parse(inputImageInfo.value);
     const xhr = new XMLHttpRequest();
-    const formData = new FormData();
-    xhr.open('POST', this.options.deleteUrl, true);
+    xhr.open('POST', url, true);
     xhr.setRequestHeader('Accept', 'application/json');
 
     xhr.addEventListener('readystatechange', () => {
@@ -348,6 +369,7 @@ class RibsFileUploader {
       }
     });
 
+    const formData = this.buildFormData(parameters);
     formData.append('file_path', imageInfo.file_path);
     formData.append('file_name', imageInfo.new_filename);
     xhr.send(formData);
