@@ -361,6 +361,9 @@ class RibsFileUploader {
 
           if (uploaderDiv.querySelector('.ribs-fileuploader-gallery').childNodes.length === 0) {
             uploaderDiv.classList.remove('has-files');
+            const progressBar = uploaderDiv.querySelector('.progress > div');
+            progressBar.classList.remove('uploaded');
+            progressBar.style.width = '0%';
           }
         }
       }
