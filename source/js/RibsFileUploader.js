@@ -10,8 +10,8 @@ class RibsFileUploader {
     });
 
     this.uploadProgress = [];
-    this.initEventListeners();
     this.defineOptions(options);
+    this.initEventListeners();
   }
 
   /**
@@ -25,7 +25,7 @@ class RibsFileUploader {
       options.deleteUrl = '';
     }
     if (!options.retrieveFilesUrl) {
-      options.retrieveFilesUrl = false;
+      options.retrieveFilesUrl = '';
     }
 
     this.options = options;
@@ -81,6 +81,7 @@ class RibsFileUploader {
     this.initDragOutEvents();
     this.initDropEvents();
     this.initInputFileOnchange();
+    this.initRetrieveFiles();
   }
 
   /**
@@ -147,6 +148,60 @@ class RibsFileUploader {
       uploaderDiv.querySelector('input[type=file]').addEventListener('change', (event) => {
         this.handleFilesUpload(event, uploaderDiv, true);
       }, false);
+    });
+  }
+
+  initRetrieveFiles() {
+    document.querySelectorAll('.ribs-fileuploader').forEach((uploaderDiv) => {
+      const parameters = this.retrieveParameter(uploaderDiv, 'retrieveFilesUrl');
+      const url = this.retrieveUrl(this.options.retrieveFilesUrl, parameters);
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', url, true);
+      xhr.setRequestHeader('Accept', 'application/json');
+
+      xhr.addEventListener('readystatechange', () => {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          const jsonResponse = JSON.parse(xhr.response);
+          const fileInputId = uploaderDiv.querySelector('input[type=file').id;
+
+          if (jsonResponse.files) {
+            uploaderDiv.classList.add('has-files');
+
+            for (const file of jsonResponse.files) {
+              const fileNumberInput = uploaderDiv.querySelector('[id*="file-number"]');
+
+              const input = document.createElement('input');
+              input.type = 'hidden';
+              input.value = JSON.stringify(file);
+              input.name = `${fileInputId}s[]`;
+              input.id = `input-uploaded-file-${file.index}`;
+              uploaderDiv.append(input);
+
+              const img = document.createElement('img');
+              img.src = file.file_path;
+              const div = document.createElement('div');
+              div.id = `uploaded-file-${file.index}`;
+              const delDiv = document.createElement('div');
+              delDiv.id = `uploaded-file-delete-${file.index}`;
+              delDiv.textContent = 'X';
+              div.appendChild(delDiv);
+              div.appendChild(img);
+              uploaderDiv.querySelector('.ribs-fileuploader-gallery').appendChild(div);
+
+              const uploadedFilePreview = uploaderDiv.querySelector(`#uploaded-file-${file.index}`);
+              uploadedFilePreview.classList.add('uploaded');
+              uploadedFilePreview.querySelector('div').addEventListener('click', (event) => this.deleteFile(event, uploaderDiv));
+
+              fileNumberInput.value = parseInt(fileNumberInput.value) + 1;
+            }
+          }
+        }
+        else if (xhr.readyState == 4 && xhr.status != 200) {
+          console.log('error');
+        }
+      });
+
+      xhr.send(this.buildFormData(parameters));
     });
   }
 
@@ -374,7 +429,7 @@ class RibsFileUploader {
 
     const formData = this.buildFormData(parameters);
     formData.append('file_path', imageInfo.file_path);
-    formData.append('file_name', imageInfo.new_filename);
+    formData.append('file_name', imageInfo.new_filename ? imageInfo.new_filename : imageInfo.filename);
     xhr.send(formData);
   }
 }
