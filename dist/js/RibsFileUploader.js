@@ -162,32 +162,19 @@ class RibsFileUploader {
       xhr.addEventListener('readystatechange', () => {
         if (xhr.readyState == 4 && xhr.status == 200) {
           const jsonResponse = JSON.parse(xhr.response);
-          const fileInputId = uploaderDiv.querySelector('input[type=file').id;
 
           if (jsonResponse.files) {
             uploaderDiv.classList.add('has-files');
 
             for (const file of jsonResponse.files) {
-              const fileNumberInput = uploaderDiv.querySelector('[id*="file-number"]');
-
-              const input = document.createElement('input');
-              input.type = 'hidden';
-              input.value = JSON.stringify(file);
-              input.name = `${fileInputId}s[]`;
-              input.id = `input-uploaded-file-${file.index}`;
-              uploaderDiv.append(input);
-
               this.appendPreviewImageDiv(uploaderDiv, file.file_path, file.index);
+              this.appendUploadElements(uploaderDiv, JSON.stringify(file), file.index);
 
-              const uploadedFilePreview = uploaderDiv.querySelector(`#uploaded-file-${file.index}`);
-              uploadedFilePreview.classList.add('uploaded');
-              uploadedFilePreview.querySelector('div').addEventListener('click', (event) => this.deleteFile(event, uploaderDiv));
-
+              const fileNumberInput = uploaderDiv.querySelector('[id*="file-number"]');
               fileNumberInput.value = parseInt(fileNumberInput.value) + 1;
             }
           }
-        }
-        else if (xhr.readyState == 4 && xhr.status != 200) {
+        } else if (xhr.readyState == 4 && xhr.status != 200) {
           console.log('error');
         }
       });
@@ -340,23 +327,32 @@ class RibsFileUploader {
 
     xhr.addEventListener('readystatechange', () => {
       if (xhr.readyState == 4 && xhr.status == 200) {
-        const fileInputId = uploaderDiv.querySelector('input[type=file').id;
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.value = xhr.response;
-        input.name = `${fileInputId}s[]`;
-        input.id = `input-uploaded-file-${index}`;
-        uploaderDiv.append(input);
-        const uploadedFilePreview = uploaderDiv.querySelector(`#uploaded-file-${index}`);
-        uploadedFilePreview.classList.add('uploaded');
-        uploadedFilePreview.querySelector('div').addEventListener('click', (event) => this.deleteFile(event, uploaderDiv));
-      }
-      else if (xhr.readyState == 4 && xhr.status != 200) {
+        this.appendUploadElements(uploaderDiv, xhr.response, index);
+      } else if (xhr.readyState == 4 && xhr.status != 200) {
         console.log('error');
       }
     });
 
     xhr.send(this.buildFormData(parameters, file));
+  }
+
+  /**
+   * method to appends upload elements to body
+   * @param uploaderDiv
+   * @param inputValue
+   * @param index
+   */
+  appendUploadElements(uploaderDiv, inputValue, index) {
+    const fileInputId = uploaderDiv.querySelector('input[type=file').id;
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.value = inputValue;
+    input.name = `${fileInputId}s[]`;
+    input.id = `input-uploaded-file-${index}`;
+    uploaderDiv.append(input);
+    const uploadedFilePreview = uploaderDiv.querySelector(`#uploaded-file-${index}`);
+    uploadedFilePreview.classList.add('uploaded');
+    uploadedFilePreview.querySelector('div').addEventListener('click', (event) => this.deleteFile(event, uploaderDiv));
   }
 
   /**
@@ -422,8 +418,7 @@ class RibsFileUploader {
             progressBar.style.width = '0%';
           }
         }
-      }
-      else if (xhr.readyState == 4 && xhr.status != 200) {
+      } else if (xhr.readyState == 4 && xhr.status != 200) {
         console.log('error');
       }
     });
