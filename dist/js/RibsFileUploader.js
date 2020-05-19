@@ -177,16 +177,7 @@ class RibsFileUploader {
               input.id = `input-uploaded-file-${file.index}`;
               uploaderDiv.append(input);
 
-              const img = document.createElement('img');
-              img.src = file.file_path;
-              const div = document.createElement('div');
-              div.id = `uploaded-file-${file.index}`;
-              const delDiv = document.createElement('div');
-              delDiv.id = `uploaded-file-delete-${file.index}`;
-              delDiv.textContent = 'X';
-              div.appendChild(delDiv);
-              div.appendChild(img);
-              uploaderDiv.querySelector('.ribs-fileuploader-gallery').appendChild(div);
+              this.appendPreviewImageDiv(uploaderDiv, file.file_path, file.index);
 
               const uploadedFilePreview = uploaderDiv.querySelector(`#uploaded-file-${file.index}`);
               uploadedFilePreview.classList.add('uploaded');
@@ -379,17 +370,27 @@ class RibsFileUploader {
     reader.readAsDataURL(file);
 
     reader.onloadend = () => {
-      const img = document.createElement('img');
-      img.src = reader.result;
-      const div = document.createElement('div');
-      div.id = `uploaded-file-${index}`;
-      const delDiv = document.createElement('div');
-      delDiv.id = `uploaded-file-delete-${index}`;
-      delDiv.textContent = 'X';
-      div.appendChild(delDiv);
-      div.appendChild(img);
-      uploaderDiv.querySelector('.ribs-fileuploader-gallery').appendChild(div);
+      this.appendPreviewImageDiv(uploaderDiv, reader.result, index);
     }
+  }
+
+  /**
+   * method to create image element in gallery div
+   * @param uploaderDiv
+   * @param filePath
+   * @param index
+   */
+  appendPreviewImageDiv(uploaderDiv, filePath, index) {
+    const img = document.createElement('img');
+    img.src = filePath;
+    const div = document.createElement('div');
+    div.id = `uploaded-file-${index}`;
+    const delDiv = document.createElement('div');
+    delDiv.id = `uploaded-file-delete-${index}`;
+    delDiv.textContent = 'X';
+    div.appendChild(delDiv);
+    div.appendChild(img);
+    uploaderDiv.querySelector('.ribs-fileuploader-gallery').appendChild(div);
   }
 
   /**
