@@ -153,7 +153,7 @@ class RibsFileUploader {
 
   initRetrieveFiles() {
     document.querySelectorAll('.ribs-fileuploader').forEach((uploaderDiv) => {
-      const parameters = this.retrieveParameter(uploaderDiv, 'retrieveFilesUrl');
+      const parameters = this.retrieveParameter(uploaderDiv, 'retrieveUrlParam');
       const url = this.retrieveUrl(this.options.retrieveFilesUrl, parameters);
       const xhr = new XMLHttpRequest();
       xhr.open('POST', url, true);
