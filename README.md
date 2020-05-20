@@ -10,6 +10,22 @@ To add a new uploader div to your page you have to add this to you html :
 <input type="file" id="my-file" multiple accept="image/*" data-ribs-fileuploader>
 ```
 
+In this input you can add some dataset.
+Inside those dataset you must provide a json.
+If you don't want to put url, delete url and retrieve url you can put in parameter with name url.
+All other parameters in jsons dataset will be transformed in form data and send to url.
+
+There is three dataset possible wich are :
+- data-url-param : will be send when upload a file
+- data-delete-url-param : will be send when delete a file
+-data-retrieve-url-param : will be send when retrieve files
+
+Input example : 
+
+```html
+<input type="file" id="my-file" multiple accept="image/*" data-ribs-fileuploader data-url-param='{"url":"www.example.com/upload"}' data-delete-url-param='{"project_id":12, "user_id":15}' data-retrieve-url-param='{"project_id":12, "user_id":15}'>
+```
+
 And after that in the js linked to this page add this : 
 
 ```js
