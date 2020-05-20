@@ -26,13 +26,22 @@ Input example :
 <input type="file" id="my-file" multiple accept="image/*" data-ribs-fileuploader data-url-param='{"url":"www.example.com/upload"}' data-delete-url-param='{"project_id":12, "user_id":15}' data-retrieve-url-param='{"project_id":12, "user_id":15}'>
 ```
 
+After you can import in your js file
 And after that in the js linked to this page add this : 
 
 ```js
+import RibsFileUploader from 'RibsFileUploader';
+
 const fileUploader = new RibsFileUploader({
   'url': 'your-upload-url',
   'deleteUrl': 'your-delete-uploaded-file-url',
 });
+```
+
+Or if you don't want to import js and just link a js file you can link this script.
+If you do it like that all urls must be provider in input parameters in dataset
+```html
+<script src="node_modules/ribs-file-uploader/dist/main.js"></script>
 ```
 
 And that's it you have the uploader running on your page :)
