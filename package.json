@@ -40,10 +40,10 @@
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "progress-bar-webpack-plugin": "^1.12.1",
     "sass-loader": "^7.1.0",
+    "uglify-es": "^3.3.9",
     "uglifyjs-webpack-plugin": "^2.1.1",
     "webpack": "^4.28.4",
     "webpack-cli": "^3.2.1"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

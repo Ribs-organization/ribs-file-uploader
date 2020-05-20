@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const CopyPlugin = require('copy-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const uglifyJS = require("uglify-es");
 
 module.exports = {
   mode: 'production',
@@ -48,7 +49,13 @@ module.exports = {
     }),
     new CopyPlugin(
       [
-        { from: './source/js/RibsFileUploader.js', to: './js/RibsFileUploader.js' },
+        {
+          from: './source/js/RibsFileUploader.js',
+          to: './js/RibsFileUploader.js',
+          transform: (content, path) => {
+            return uglifyJS.minify(content.toString()).code;
+          },
+        },
       ]
     ),
     new ProgressBarPlugin()
