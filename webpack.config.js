@@ -56,6 +56,10 @@ module.exports = {
             return uglifyJS.minify(content.toString()).code;
           },
         },
+        {
+          from: './source/js/RibsFileUploader.js',
+          to: './js/RibsFileUploader.js',
+        },
       ]
     ),
     new ProgressBarPlugin()

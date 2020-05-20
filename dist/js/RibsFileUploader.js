@@ -155,6 +155,12 @@ class RibsFileUploader {
     document.querySelectorAll('.ribs-fileuploader').forEach((uploaderDiv) => {
       const parameters = this.retrieveParameter(uploaderDiv, 'retrieveUrlParam');
       const url = this.retrieveUrl(this.options.retrieveFilesUrl, parameters);
+
+      if (!url || url == '') {
+        console.error(`Url to retrieve file can't be null for uploader id ${uploaderDiv.id}`);
+        return false;
+      }
+
       const xhr = new XMLHttpRequest();
       xhr.open('POST', url, true);
       xhr.setRequestHeader('Accept', 'application/json');
@@ -317,6 +323,12 @@ class RibsFileUploader {
   uploadFile(file, index, progressIndex, uploaderDiv) {
     const parameters = this.retrieveParameter(uploaderDiv, 'urlParam');
     const url = this.retrieveUrl(this.options.url, parameters);
+
+    if (!url || url == '') {
+      console.error(`Url to upload file can't be null for uploader id ${uploaderDiv.id}`);
+      return false;
+    }
+
     const xhr = new XMLHttpRequest();
     xhr.open('POST', url, true);
     xhr.setRequestHeader('Accept', 'application/json');
@@ -397,6 +409,12 @@ class RibsFileUploader {
   deleteFile(event, uploaderDiv) {
     const parameters = this.retrieveParameter(uploaderDiv, 'deleteUrlParam');
     const url = this.retrieveUrl(this.options.deleteUrl, parameters);
+
+    if (!url || url == '') {
+      console.error(`Url to delete file can't be null for uploader id ${uploaderDiv.id}`);
+      return false;
+    }
+
     const imageDiv = event.currentTarget.parentNode;
     const inputImageInfo = uploaderDiv.querySelector(`#input-${imageDiv.id}`);
     const imageInfo = JSON.parse(inputImageInfo.value);
