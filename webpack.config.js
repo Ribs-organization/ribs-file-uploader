@@ -51,7 +51,7 @@ module.exports = {
       [
         {
           from: './source/js/RibsFileUploader.js',
-          to: './js/RibsFileUploader.js',
+          to: './js/RibsFileUploader.min.js',
           transform: (content, path) => {
             return uglifyJS.minify(content.toString()).code;
           },
