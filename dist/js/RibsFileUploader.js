@@ -169,7 +169,7 @@ class RibsFileUploader {
         if (xhr.readyState == 4 && xhr.status == 200) {
           const jsonResponse = JSON.parse(xhr.response);
 
-          if (jsonResponse.files) {
+          if (jsonResponse.files && jsonResponse.files.length > 0) {
             uploaderDiv.classList.add('has-files');
 
             for (const file of jsonResponse.files) {
