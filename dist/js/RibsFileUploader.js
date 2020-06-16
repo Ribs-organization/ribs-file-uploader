@@ -31,6 +31,13 @@ class RibsFileUploader {
     this.options = options;
   }
 
+  getAcceptedFileTypes(uploaderDiv) {
+    const fileInput = uploaderDiv.querySelector('input[type=file]');
+    const acceptedString = fileInput.getAttribute('accept');
+
+    return acceptedString.split(',');
+  }
+
   /**
    * method to create all html elements of the drag file uploader
    * @param uploader
@@ -204,6 +211,15 @@ class RibsFileUploader {
       files = [...event.currentTarget.files];
     } else {
       files = [...dt.files];
+    }
+
+    for (let [index, file] of files.entries()) {
+      console.log(this.getAcceptedFileTypes(uploaderDiv))
+      console.log(file.type)
+      console.log(this.getAcceptedFileTypes(uploaderDiv).indexOf(file.type))
+      if (this.getAcceptedFileTypes(uploaderDiv).indexOf(file.type) === -1) {
+        files.splice(index, 1);
+      }
     }
 
     const fileNumberInput = uploaderDiv.querySelector('[id*="file-number"]');
