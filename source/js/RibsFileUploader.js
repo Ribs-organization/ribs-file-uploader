@@ -31,11 +31,37 @@ class RibsFileUploader {
     this.options = options;
   }
 
+  /**
+   * method to get an array of accepted file types
+   * @param uploaderDiv
+   * @returns {string[]}
+   */
   getAcceptedFileTypes(uploaderDiv) {
     const fileInput = uploaderDiv.querySelector('input[type=file]');
     const acceptedString = fileInput.getAttribute('accept');
 
     return acceptedString.split(',');
+  }
+
+  /**
+   * method to get sting with accepted file types
+   * @param uploaderDiv
+   * @returns {string}
+   */
+  getFormattedAcceptedFileTypes(uploaderDiv) {
+    const fileTypes = this.getAcceptedFileTypes(uploaderDiv);
+    let typeString = '';
+
+    for (const fullType of fileTypes) {
+      const type = fullType.split('/')[1];
+      if (typeString === '') {
+        typeString +=  `.${type}`;
+      } else {
+        typeString += `, .${type}`;
+      }
+    }
+
+    return typeString;
   }
 
   /**
@@ -158,6 +184,18 @@ class RibsFileUploader {
     });
   }
 
+  /**
+   * method to display message when there is an error
+   * @param uploaderDiv
+   */
+  showError(uploaderDiv) {
+    const textDiv = document.createElement('div');
+    textDiv.classList.add('ribs-fileuploader-error');
+    console.log(this.getFormattedAcceptedFileTypes(uploaderDiv))
+    textDiv.textContent = `Les extensions de fichier autorisées sont les suivantes : ${this.getFormattedAcceptedFileTypes(uploaderDiv)}`;
+    uploaderDiv.prepend(textDiv);
+  }
+
   initRetrieveFiles() {
     document.querySelectorAll('.ribs-fileuploader').forEach((uploaderDiv) => {
       const parameters = this.retrieveParameter(uploaderDiv, 'retrieveUrlParam');
@@ -203,7 +241,6 @@ class RibsFileUploader {
    * @param fromChangeEvent
    */
   handleFilesUpload(event, uploaderDiv, fromChangeEvent = false) {
-    uploaderDiv.classList.add('has-files');
     let files;
     const dt = event.dataTransfer;
 
@@ -214,9 +251,6 @@ class RibsFileUploader {
     }
 
     for (let [index, file] of files.entries()) {
-      console.log(this.getAcceptedFileTypes(uploaderDiv))
-      console.log(file.type)
-      console.log(this.getAcceptedFileTypes(uploaderDiv).indexOf(file.type))
       if (this.getAcceptedFileTypes(uploaderDiv).indexOf(file.type) === -1) {
         files.splice(index, 1);
       }
@@ -232,14 +266,19 @@ class RibsFileUploader {
       startIndex = parseInt(fileNumberInput.value) - files.length;
     }
 
-    this.initializeProgress(uploaderDiv, files.length);
-    files.forEach((file, index) => {
-      this.uploadFile(file, startIndex+index, index, uploaderDiv);
-    });
+    if (files.length > 0) {
+      uploaderDiv.classList.add('has-files');
+      this.initializeProgress(uploaderDiv, files.length);
+      files.forEach((file, index) => {
+        this.uploadFile(file, startIndex+index, index, uploaderDiv);
+      });
 
-    files.forEach((file, index) => {
-      this.previewFile(file, uploaderDiv, startIndex+index)
-    });
+      files.forEach((file, index) => {
+        this.previewFile(file, uploaderDiv, startIndex+index)
+      });
+    } else {
+      this.showError(uploaderDiv);
+    }
   }
 
   /**
