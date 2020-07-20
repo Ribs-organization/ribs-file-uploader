@@ -47,17 +47,17 @@
 	}
 	
 	> label {
-		font-weight: 400;
+		font-weight: 400 !important;
 		font-family: sans-serif;
 		padding: .5625rem 1rem;
-		font-size: .75rem;
+		font-size: .75rem !important;
 		line-height: 1.125;
 		border-radius: .25rem;
 		transition: all 250ms cubic-bezier(.27,.01,.38,1.06);
-		color: #ffffff;
+		color: #ffffff !important;
 		border: 1px solid #007bff;
 		background: #007bff;
-		display: block;
+		display: block !important;
 		width: 135px;
 		margin: auto;
 		cursor: pointer;
