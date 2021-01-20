@@ -1,6 +1,6 @@
 {
   "name": "ribs-file-uploader",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "ribs-file-uploader is a fileuploader that can be put where you want",
   "main": "dist/js/RibsFileUploader.js",
   "scripts": {
