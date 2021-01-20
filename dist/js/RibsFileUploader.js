@@ -53,15 +53,32 @@ class RibsFileUploader {
     let typeString = '';
 
     for (const fullType of fileTypes) {
-      const type = fullType.split('/')[1];
       if (typeString === '') {
-        typeString +=  `.${type}`;
+        typeString +=  `${fullType}`;
       } else {
-        typeString += `, .${type}`;
+        typeString += `, ${fullType}`;
       }
     }
 
     return typeString;
+  }
+
+  /**
+   * method to know if file type is authorized for upload
+   * @param uploaderDiv
+   * @param fileType
+   * @returns {boolean}
+   */
+  isFileTypeAccepted(uploaderDiv, fileType) {
+    const acceptedFileType = this.getAcceptedFileTypes(uploaderDiv);
+    const fileTypeCat = fileType.split('/')[0];
+
+    if (acceptedFileType.indexOf(`${fileTypeCat}/*`) !== -1) {
+      return true;
+    } else if (acceptedFileType.indexOf(fileType) !== -1) {
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -251,7 +268,7 @@ class RibsFileUploader {
     }
 
     for (let [index, file] of files.entries()) {
-      if (this.getAcceptedFileTypes(uploaderDiv).indexOf(file.type) === -1) {
+      if (!this.isFileTypeAccepted(uploaderDiv, file.type)) {
         files.splice(index, 1);
       }
     }
